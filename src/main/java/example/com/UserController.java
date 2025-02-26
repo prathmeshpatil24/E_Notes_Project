@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -131,7 +132,8 @@ public class UserController {
 	
 	//6 
 	@GetMapping("/profile")
-	public String profilePage(Model m, Principal p) {
+	public String profilePage(Model m, Principal p,
+			RedirectAttributes redirectAttributes) {
 		 if (p == null) {
 		        return "redirect:/signin"; // Redirect to login if user is not authenticated
 		    }
@@ -141,40 +143,65 @@ public class UserController {
 		m.addAttribute("email", user.getEmail());
 		m.addAttribute("gender", user.getGender());
 		m.addAttribute("address", user.getAddress());
+		
+		// Retrieve flash attributes and add them to the model
+	    if (redirectAttributes.getFlashAttributes().containsKey("success")) {
+	        m.addAttribute("success", redirectAttributes.getFlashAttributes().get("success"));
+	    }
+	    if (redirectAttributes.getFlashAttributes().containsKey("error")) {
+	        m.addAttribute("error", redirectAttributes.getFlashAttributes().get("error"));
+	    }
+		
 		return "profilePage";
 	}
 	
 	
-//	@PostMapping("/update-profile")
-//	public String updateProfile(  
-//	        @RequestParam("name") String name,
-//	        @RequestParam("gender") String gender,
-//	        @RequestParam("address") String address,
-//	        @RequestParam(value = "id", required = false) Integer id,
-//	        Model model) {
-//		if (id == null) {
-//			
-//			 return "/user/profilePage";
-//		}
-//
-//	    Optional<UserEntity> optionalUser = userRepo.findById(id); // Fix: Use Optional
-//
-//	    if (optionalUser.isPresent()) { // Fix: Handle Optional properly
-//	        UserEntity user = optionalUser.get();
-//	        user.setName(name);
-//	        user.setGender(gender);
-//	        user.setAddress(address);
-//
-//	        userRepo.save(user); // Fix: Save after modification
-//
-//	        // Add a success message
-//	        model.addAttribute("success", "Profile updated successfully!");
-//	    } else {
-//	        model.addAttribute("error", "User not found!");
-//	    }
-//
-//	    return "/user/profilePage"; // Fix: Return a valid view name (change 'profile' as per your template)
-//	}
+	@PostMapping("/update-profile")
+    public String updateProfile(
+            @RequestParam("name") String name,
+            @RequestParam("gender") String gender,
+            @RequestParam("address") String address,
+            @RequestParam(value = "id", required = false) Integer id,
+            Model m, Principal p,
+            RedirectAttributes redirectAttributes) {
+
+        UserEntity user = getUser(p, m);
+
+        try {
+            Optional<UserEntity> byId = userRepo.findById(user.getId());
+
+            if (!byId.isPresent()) {
+                return "redirect:/login";
+            }
+
+            UserEntity existingUser = byId.get();
+            existingUser.setName(name);
+            existingUser.setGender(gender);
+            existingUser.setAddress(address);
+
+            userRepo.save(existingUser);
+            redirectAttributes.addFlashAttribute("success", "Profile updated successfully!"); // Use flash attribute
+
+//            m.addAttribute("name", existingUser.getName());
+//            m.addAttribute("gender", existingUser.getGender());
+//            m.addAttribute("address", existingUser.getAddress());
+//            m.addAttribute("email", existingUser.getEmail());
+//            m.addAttribute("userID", existingUser.getId());
+//            m.addAttribute("success", "Profile updated successfully!");
+            
+
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            //m.addAttribute("error", "An error occurred while updating your profile. Please try again.");
+            redirectAttributes.addFlashAttribute("error", "An error occurred while updating your profile. Please try again.");
+        } catch (Exception e) {
+        	e.printStackTrace();
+            //m.addAttribute("error", "An unexpected error occurred. Please try again.");
+        	 redirectAttributes.addFlashAttribute("error", "An unexpected error occurred. Please try again."); 
+        }
+
+        return "redirect:/user/profile";
+    }
 
 	
 	

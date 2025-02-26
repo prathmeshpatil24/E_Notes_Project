@@ -17,7 +17,7 @@
 							<th:block th:if="${param.error}">
 								<p class="text-center text-danger fs-5">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
 							</th:block>
-							
+
 							<th:block th:if="${param.logout}">
 								<p class="text-center text-success fs-5">Logout sucessfully</p>
 							</th:block>
@@ -40,8 +40,11 @@
 						</div>
 						<div class="card-footer text-center">
 							<p class="fs-6">
-								don't have an account <a href="register"
+								don't have an account <a th:href="@{/register}"
 									class="text-decoration-none">register</a>
+							</p>
+							<p>
+								<a th:href="@{/forgot-password}" class="link-opacity-100-hover m-2">Forgot Password?</a>
 							</p>
 						</div>
 					</div>

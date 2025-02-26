@@ -65,6 +65,13 @@ body {
 <body>
 	<section>
 		<div class="profile-container">
+
+			<div th:if="${success}" class="alert alert-success" role="alert">
+				<span th:text="${success}"></span>
+			</div>
+			<div th:if="${error}" class="alert alert-danger" role="alert">
+				<span th:text="${error}"></span>
+			</div>
 			<h1 class="profile-header text-center">
 				Welcome, <span th:text="${name}"></span>!
 			</h1>
@@ -112,7 +119,8 @@ body {
 					</div>
 					<div class="modal-body">
 
-						<form id="updateForm" th:action="@{/user/update-profile}" method="post">
+						<form id="updateForm" th:action="@{/user/update-profile}"
+							method="post">
 							<div th:if="${success}" class="alert alert-success" role="alert">
 								<span th:text="${success}"></span>
 							</div>
@@ -137,7 +145,7 @@ body {
 								<label>Address:</label> <input type="text" name="address"
 									th:value="${address}" class="form-control">
 							</div>
-							
+
 						</form>
 					</div>
 					<div class="modal-footer">
