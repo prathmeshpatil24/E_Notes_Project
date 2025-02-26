@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::title}, ~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+
+<style>
+/* Custom styles */
+body {
+	background-color: #f8f9fa;
+	font-family: 'Arial', sans-serif;
+}
+
+.welcome-container {
+	max-width: 800px;
+	margin: 50px auto;
+	padding: 30px;
+	background-color: #ffffff;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-title {
+	color: #007bff;
+	font-weight: bold;
+}
+
+.user-info {
+	font-size: 1.1rem;
+	color: #343a40;
+}
+
+.btn-custom {
+	background-color: #007bff;
+	color: white;
+	padding: 10px 20px;
+	border-radius: 5px;
+	text-decoration: none;
+	transition: background-color 0.3s;
+}
+
+.btn-custom:hover {
+	background-color: #0056b3;
+	color: white;
+}
+</style>
+</head>
+<body>
+	<section>
+		<div class="welcome-container text-center">
+			<h1 class="welcome-title">
+				Welcome, <span th:text="${name}"></span> to E-Notes!
+			</h1>
+			<p class="user-info">
+				Your User ID: <strong><span th:text="${userID}"></span></strong>
+			</p>
+			<p>
+				<a class="btn-custom nav-link" th:href="@{/user/addNotes}"> Add
+					Your Notes </a>
+			</p>
+		</div>
+	</section>
+
+
+</body>
+</html>

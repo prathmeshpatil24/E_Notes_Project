@@ -1,0 +1,32 @@
+<html lang="en" xmlns:th="www.thymeleaf.org"
+	th:replace="~{ base :: layout(~{::title} , ~{::section} ) }">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message</title>
+
+</head>
+<body>
+	<section>
+		<div class="container mt-5">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<div class="card text-center">
+						<div class="card-header bg-primary text-white">
+							<h3>Authentication Error</h3>
+						</div>
+						 <div class="card-body">
+                        <!-- Display error message -->
+                        <p class="text-danger lead">${error}</p>
+                        <a href="/signin" class="btn btn-primary">Go Back to Login</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        &copy; 2025 Example Team
+                    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

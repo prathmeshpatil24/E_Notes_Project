@@ -1,0 +1,36 @@
+<html lang="en" xmlns:th="www.thymeleaf.org"
+	th:replace="~{ base :: layout(~{::title} , ~{::section} ) }">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message</title>
+
+</head>
+<body>
+	<section>
+		<div class="container mt-5">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<div class="card text-center">
+						<div class="card-header bg-primary text-white">
+							<h3>Account Verification</h3>
+						</div>
+						<div class="card-body">
+							<!-- Display the dynamic message -->
+							<p th:text="${msg}" class="lead"></p>
+
+							<!-- Show "Go to Login" button only if verification is successful -->
+							<th:block th:if="${success}">
+								<a th:href="@{/signin}" class="btn btn-primary mt-3"
+									th:if="${success}">Go to Login</a>
+							</th:block>
+						</div>
+						<div class="card-footer text-muted">&copy; 2025 e_notes Team
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
