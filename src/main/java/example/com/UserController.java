@@ -1,12 +1,21 @@
 package example.com;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,10 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
-
 
 @Controller
 @RequestMapping("/user")
@@ -27,17 +36,20 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepo;
 
-//	@Autowired
-//	private NotesRepository notesRepo;
+	@Autowired
+	private NotesRepository notesRepo;
 
 	@Autowired
 	private NotesService notesService;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private UserServiceImpl userServiceImpl;
+
+	@Autowired
+	private FileService fileService;
 
 	@ModelAttribute
 	public UserEntity getUser(Principal p, Model m) {
@@ -46,42 +58,79 @@ public class UserController {
 		m.addAttribute("user", user);
 		return user;
 	}
-	
-	//1
+
+	// 1
 	@GetMapping("/homePage")
 	public String homePage(Model m, Principal p) {
-		 if (p == null) {
-		        return "redirect:/signin"; // Redirect to login if user is not authenticated
-		    }
+		if (p == null) {
+			return "redirect:/signin"; // Redirect to login if user is not authenticated
+		}
 		UserEntity user = getUser(p, m);
 		m.addAttribute("name", user.getName().toUpperCase());
 		m.addAttribute("userID", user.getId());
 		return "homePage";
 	}
 
-	//2
+	// 2
 	@GetMapping("/addNotes")
 	public String addNotes() {
 		System.out.println("controller come in add notes");
 		return "addNotes";
 	}
-	
-	@PostMapping("/saveNotes")
-	public String saveNotes(@ModelAttribute NotesEntity notes, HttpSession session, Principal p, Model m) {
-		notes.setLocalDate(LocalDate.now());
-		notes.setUser(getUser(p, m));
-		
-		NotesEntity saveNotes = notesService.saveNotes(notes);
 
-		if (saveNotes != null) {
-			session.setAttribute("msg", "Notes save successfully");
-		} else {
-			session.setAttribute("msg", "something went wrong");
+	// for only text save data
+//	@PostMapping("/saveNotes")
+//	public String saveNotes(@ModelAttribute NotesEntity notes, HttpSession session, Principal p, Model m) {
+//		notes.setLocalDate(LocalDate.now());
+//		notes.setUser(getUser(p, m));
+//		
+//		NotesEntity saveNotes = notesService.saveNotes(notes);
+//
+//		if (saveNotes != null) {
+//			session.setAttribute("msg", "Notes save successfully");
+//		} else {
+//			session.setAttribute("msg", "something went wrong");
+//		}
+//		return "redirect:/user/addNotes";
+//	}
+
+	// for text as well as file uploading
+	@PostMapping("/saveNotes")
+	public String saveNotes(@ModelAttribute NotesEntity notes,
+			@RequestParam(value = "file", required = false) MultipartFile file, HttpSession session, Principal p,
+			Model m) {
+		try {
+			notes.setLocalDate(LocalDate.now());
+			notes.setUser(getUser(p, m));
+
+			if (file != null && !file.isEmpty()) {
+				String userEmail = p.getName();
+				String filePath = fileService.uploadFile(file, userEmail);// get full path
+
+				notes.setFilePath(filePath);
+
+			}
+
+			NotesEntity savedNotes = notesService.saveNotes(notes);
+			if (savedNotes != null) {
+				session.setAttribute("msg", "Notes save successfully");
+			} else {
+				session.setAttribute("msg", "something went wrong");
+			}
+
+		} catch (IllegalArgumentException e) {
+			session.setAttribute("msg", "Invalid input: " + e.getMessage());
+		} catch (IOException e) {
+			session.setAttribute("msg", "File upload failed: " + e.getMessage());
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			session.setAttribute("msg", "Error saving note: " + e.getMessage().toString());
 		}
 		return "redirect:/user/addNotes";
 	}
 
-	//3
+	// 3
 //	@GetMapping("/viewNotes")
 //	public String viewNotes(Model m, Principal p) {
 //		UserEnity user = getUser(p, m);
@@ -90,30 +139,82 @@ public class UserController {
 //		return "viewNotes";
 //	}
 
-	//3
+	//logic for file view
+	@GetMapping("/viewNotes/downloadNoteFile/{notesId}")
+	public ResponseEntity<?>DownloadNotesFile(@PathVariable int notesId, Principal p, Model m){
+		try {
+			UserEntity userEntity = getUser(p, m);
+			NotesEntity note = notesService.getNotesById(notesId);
+            if (note == null || note.getFilePath() == null) {
+                return new ResponseEntity<>("No file associated with this note", HttpStatus.NOT_FOUND);
+            }
+            if (!note.getUser().getEmail().equals(userEntity.getEmail())) {
+                return new ResponseEntity<>("Unauthorized access", HttpStatus.FORBIDDEN);
+            }
+            
+            byte[] fileData = fileService.downloadFile(note.getFilePath());
+            String fileName = FilenameUtils.getName(note.getFilePath());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(getContentType(fileName)));
+            headers.setContentDisposition(ContentDisposition.inline().filename(fileName).build());
+
+            return ResponseEntity.ok().headers(headers).body(fileData);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return new ResponseEntity<>("Error downloading file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	private String getContentType(String fileName) {
+        String extension = FilenameUtils.getExtension(fileName).toLowerCase();
+        switch (extension) {
+            case "pdf": return "application/pdf";
+            case "xlsx": return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            case "txt": return "text/plain";
+            case "png": return "image/png";
+            case "jpeg": return "image/jpeg";
+            default: return "application/octet-stream";
+        }
+    }
+	
+	// 3
 	// pagination
 	@GetMapping("/viewNotes")
-	public String viewNotes(Model m, Principal p, @RequestParam(defaultValue = "0") int page,
+	public String viewNotes(Model m, Principal p, 
+			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 		UserEntity user = getUser(p, m);
+		
 		// from notesRepo
 		Page<NotesEntity> paginatedNotes = notesService.getNotesByUser(user, page, size);
 
-		m.addAttribute("notesList", paginatedNotes.getContent());//data
-		m.addAttribute("currentPage", page); //current page
+		// Create a map of note IDs to filenames
+        Map<Integer, String> fileNames = new HashMap<>();
+        for (NotesEntity note : paginatedNotes.getContent()) {
+            if (note.getFilePath() != null) {
+                fileNames.put(note.getId(), FilenameUtils.getName(note.getFilePath()));
+            }
+        }
+        
+        
+        m.addAttribute("fileNames", fileNames); // map of filenames
+        System.out.println(fileNames+ "file name");
+		m.addAttribute("notesList", paginatedNotes.getContent());// data
+		m.addAttribute("currentPage", page); // current page
 		m.addAttribute("totalPages", paginatedNotes.getTotalPages());// total page
 		m.addAttribute("totalItems", paginatedNotes.getTotalElements());// total count of data
-		
+
 		// Optionally add a message if no notes are available
-	    if (paginatedNotes.getTotalElements() == 0) {
-	        m.addAttribute("noNotesMessage", "No notes available.");
-	    }
-		
+		if (paginatedNotes.getTotalElements() == 0) {
+			m.addAttribute("noNotesMessage", "No notes available.");
+		}
+
 		return "viewNotes";
 	}
 
-	
-	//4
+	// 4
 	@GetMapping("/editNotes/{id}")
 	public String editNotes(@PathVariable int id, Model model, HttpSession session) {
 		NotesEntity note = notesService.getNotesById(id);
@@ -122,65 +223,59 @@ public class UserController {
 		return "editNotes";
 	}
 
-	//5
+	// 5
 	@GetMapping("/deleteNotes/{id}")
 	public String deleteNotes(@PathVariable int id, HttpSession session) {
 		notesService.deleteNotesById(id);
-		session.setAttribute("msg", "Note deleted successfully.");
+		//session.setAttribute("msg", "Note deleted successfully.");
 		return "redirect:/user/viewNotes"; // Redirect to the view notes page after deletion
 	}
-	
-	//6 
+
+	// 6
 	@GetMapping("/profile")
-	public String profilePage(Model m, Principal p,
-			RedirectAttributes redirectAttributes) {
-		 if (p == null) {
-		        return "redirect:/signin"; // Redirect to login if user is not authenticated
-		    }
+	public String profilePage(Model m, Principal p, RedirectAttributes redirectAttributes) {
+		if (p == null) {
+			return "redirect:/signin"; // Redirect to login if user is not authenticated
+		}
 		UserEntity user = getUser(p, m);
 		m.addAttribute("name", user.getName().toUpperCase());
 		m.addAttribute("userID", user.getId());
 		m.addAttribute("email", user.getEmail());
 		m.addAttribute("gender", user.getGender());
 		m.addAttribute("address", user.getAddress());
-		
+
 		// Retrieve flash attributes and add them to the model
-	    if (redirectAttributes.getFlashAttributes().containsKey("success")) {
-	        m.addAttribute("success", redirectAttributes.getFlashAttributes().get("success"));
-	    }
-	    if (redirectAttributes.getFlashAttributes().containsKey("error")) {
-	        m.addAttribute("error", redirectAttributes.getFlashAttributes().get("error"));
-	    }
-		
+		if (redirectAttributes.getFlashAttributes().containsKey("success")) {
+			m.addAttribute("success", redirectAttributes.getFlashAttributes().get("success"));
+		}
+		if (redirectAttributes.getFlashAttributes().containsKey("error")) {
+			m.addAttribute("error", redirectAttributes.getFlashAttributes().get("error"));
+		}
+
 		return "profilePage";
 	}
-	
-	
+
 	@PostMapping("/update-profile")
-    public String updateProfile(
-            @RequestParam("name") String name,
-            @RequestParam("gender") String gender,
-            @RequestParam("address") String address,
-            @RequestParam(value = "id", required = false) Integer id,
-            Model m, Principal p,
-            RedirectAttributes redirectAttributes) {
+	public String updateProfile(@RequestParam("name") String name, @RequestParam("gender") String gender,
+			@RequestParam("address") String address, @RequestParam(value = "id", required = false) Integer id, Model m,
+			Principal p, RedirectAttributes redirectAttributes) {
 
-        UserEntity user = getUser(p, m);
+		UserEntity user = getUser(p, m);
 
-        try {
-            Optional<UserEntity> byId = userRepo.findById(user.getId());
+		try {
+			Optional<UserEntity> byId = userRepo.findById(user.getId());
 
-            if (!byId.isPresent()) {
-                return "redirect:/login";
-            }
+			if (!byId.isPresent()) {
+				return "redirect:/login";
+			}
 
-            UserEntity existingUser = byId.get();
-            existingUser.setName(name);
-            existingUser.setGender(gender);
-            existingUser.setAddress(address);
+			UserEntity existingUser = byId.get();
+			existingUser.setName(name);
+			existingUser.setGender(gender);
+			existingUser.setAddress(address);
 
-            userRepo.save(existingUser);
-            redirectAttributes.addFlashAttribute("success", "Profile updated successfully!"); // Use flash attribute
+			userRepo.save(existingUser);
+			redirectAttributes.addFlashAttribute("success", "Profile updated successfully!"); // Use flash attribute
 
 //            m.addAttribute("name", existingUser.getName());
 //            m.addAttribute("gender", existingUser.getGender());
@@ -188,75 +283,70 @@ public class UserController {
 //            m.addAttribute("email", existingUser.getEmail());
 //            m.addAttribute("userID", existingUser.getId());
 //            m.addAttribute("success", "Profile updated successfully!");
-            
 
-        } catch (DataAccessException e) {
-            e.printStackTrace();
-            //m.addAttribute("error", "An error occurred while updating your profile. Please try again.");
-            redirectAttributes.addFlashAttribute("error", "An error occurred while updating your profile. Please try again.");
-        } catch (Exception e) {
-        	e.printStackTrace();
-            //m.addAttribute("error", "An unexpected error occurred. Please try again.");
-        	 redirectAttributes.addFlashAttribute("error", "An unexpected error occurred. Please try again."); 
-        }
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+			// m.addAttribute("error", "An error occurred while updating your profile.
+			// Please try again.");
+			redirectAttributes.addFlashAttribute("error",
+					"An error occurred while updating your profile. Please try again.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			// m.addAttribute("error", "An unexpected error occurred. Please try again.");
+			redirectAttributes.addFlashAttribute("error", "An unexpected error occurred. Please try again.");
+		}
 
-        return "redirect:/user/profile";
-    }
+		return "redirect:/user/profile";
+	}
 
-	
-	
-	//7
+	// 7
 	@GetMapping("/setting")
 	public String setting() {
 		return "settingPage";
 	}
-	
-	
+
 	@PostMapping("/changePassword")
-	public String changePassword(@RequestParam("oldPassword") String oldPassword, 
-	                             @RequestParam("newPassword") String newPassword,
-	                              Principal p, Model m, RedirectAttributes redirectAttributes) {
-	    System.out.println("old pass:- " + oldPassword);
-	    System.out.println("new pass:- " + newPassword);
+	public String changePassword(@RequestParam("oldPassword") String oldPassword,
+			@RequestParam("newPassword") String newPassword, Principal p, Model m,
+			RedirectAttributes redirectAttributes) {
+		System.out.println("old pass:- " + oldPassword);
+		System.out.println("new pass:- " + newPassword);
 
-	    UserEntity user = getUser(p, m);
+		UserEntity user = getUser(p, m);
 
-	    Optional<UserEntity> byId = userRepo.findById(user.getId());
+		Optional<UserEntity> byId = userRepo.findById(user.getId());
 
-	    if (!byId.isPresent()) {
-	        redirectAttributes.addFlashAttribute("error", "User not authenticated");
-	        return "redirect:/login";
-	    }
+		if (!byId.isPresent()) {
+			redirectAttributes.addFlashAttribute("error", "User not authenticated");
+			return "redirect:/login";
+		}
 
-	    UserEntity existingUser = byId.get();
-	    
-	    // Verify old password matches
-	    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-	        redirectAttributes.addFlashAttribute("error", "Current password is incorrect");
-	        return "redirect:/user/setting"; // Stay on settings page
-	    }
+		UserEntity existingUser = byId.get();
 
-	    // Validate new password length
-	    if (newPassword.length() < 6) {
-	        redirectAttributes.addFlashAttribute("error", "New password must be at least 6 characters");
-	        return "redirect:/user/setting";
-	    }
+		// Verify old password matches
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+			redirectAttributes.addFlashAttribute("error", "Current password is incorrect");
+			return "redirect:/user/setting"; // Stay on settings page
+		}
 
-	    // Update password
-	    String encodedNewPassword = passwordEncoder.encode(newPassword);
-	    user.setPassword(encodedNewPassword);
+		// Validate new password length
+		if (newPassword.length() < 6) {
+			redirectAttributes.addFlashAttribute("error", "New password must be at least 6 characters");
+			return "redirect:/user/setting";
+		}
 
-	    try {
-	        userRepo.save(existingUser);
-	        redirectAttributes.addFlashAttribute("success", "Password changed successfully");
-	        return "redirect:/user/setting"; // Stay on settings page with success message
-	    } catch (Exception e) {
-	        redirectAttributes.addFlashAttribute("error", "Error updating password");
-	        return "redirect:/user/setting";
-	    }
+		// Update password
+		String encodedNewPassword = passwordEncoder.encode(newPassword);
+		user.setPassword(encodedNewPassword);
+
+		try {
+			userRepo.save(existingUser);
+			redirectAttributes.addFlashAttribute("success", "Password changed successfully");
+			return "redirect:/user/setting"; // Stay on settings page with success message
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error updating password");
+			return "redirect:/user/setting";
+		}
 	}
-
-
-
 
 }

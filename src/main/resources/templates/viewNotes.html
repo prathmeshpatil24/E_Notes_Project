@@ -41,6 +41,12 @@
 								<p>
 									<strong>Created At:</strong> <span th:text="${n.localDate}"></span>
 								</p>
+								<p>
+								<a th:if="${n.filePath}" th:href="@{viewNotes/downloadNoteFile/{id}(id=${n.id})}"
+								target="_blank"
+								th:text="${fileNames[n.id]}">Download</a>
+								<span th:unless="${n.filePath}">No File</span>
+								</p>
 							</div>
 							<div class="text-center">
 
@@ -49,7 +55,8 @@
 								<a th:href="@{'editNotes/' + ${n.id}}"
 									class="btn btn-primary btn-sm">Edit</a> <a
 									th:href="@{'deleteNotes/'+${n.id}}"
-									class="btn btn-danger btn-sm">Delete</a>
+									class="btn btn-danger btn-sm"
+									onclick="return confirm('Are you sure you want to delete this note?')">Delete</a>
 							</div>
 						</div>
 					</div>
