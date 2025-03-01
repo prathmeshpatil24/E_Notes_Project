@@ -12,6 +12,8 @@ public interface NotesRepository extends JpaRepository<NotesEntity, Integer> {
 	//public List<NotesEntity>findByUser(UserEnity user);
 	
 	Page<NotesEntity> findByUser(UserEntity user, Pageable pageable);
+	
+	List<NotesEntity> findByFilePath(String filePath);
 		
 
 }

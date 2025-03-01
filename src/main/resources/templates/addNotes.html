@@ -20,7 +20,7 @@
 
 						</div>
 						<div class="card-body">
-							<form action="saveNotes" method="post">
+							<form action="saveNotes" method="post" enctype="multipart/form-data">
 								<div class="mb-3">
 									<label>Enter Title</label> <input type="text" name="title"
 										class="form-control">
@@ -30,6 +30,11 @@
 									<label>Enter Description</label>
 									<textarea rows="6" cols="" class="form-control"
 										name="description"></textarea>
+								</div>
+								
+								<div class="mb-3">
+									<label>Optional File Upload:</label>
+									<input type="file" name="file" class ="form-control" />
 								</div>
 
 								<button class="btn btn-primary mt-4">Save</button>
