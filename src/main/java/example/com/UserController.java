@@ -184,11 +184,21 @@ public class UserController {
 	@GetMapping("/viewNotes")
 	public String viewNotes(Model m, Principal p, 
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
+			@RequestParam(defaultValue = "5") int size,
+			@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword) {
+		
 		UserEntity user = getUser(p, m);
 		
 		// from notesRepo
-		Page<NotesEntity> paginatedNotes = notesService.getNotesByUser(user, page, size);
+		Page<NotesEntity> paginatedNotes;
+		
+		if (keyword != null & !keyword.trim().isBlank()) {
+			 paginatedNotes = notesService.searchNotesByKeyword(user, keyword, page, size);
+		        m.addAttribute("keyword", keyword);
+		}else {
+	        paginatedNotes = notesService.getNotesByUser(user, page, size);
+	    }
+		
 
 		// Create a map of note IDs to filenames
         Map<Integer, String> fileNames = new HashMap<>();
@@ -200,7 +210,7 @@ public class UserController {
         
         
         m.addAttribute("fileNames", fileNames); // map of filenames
-        System.out.println(fileNames+ "file name");
+        //System.out.println(fileNames+ "file name");
 		m.addAttribute("notesList", paginatedNotes.getContent());// data
 		m.addAttribute("currentPage", page); // current page
 		m.addAttribute("totalPages", paginatedNotes.getTotalPages());// total page

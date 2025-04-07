@@ -24,6 +24,25 @@
 					</div>
 
 
+					<!-- search function -->
+					<div class="d-flex justify-content-center mb-4">
+						<form th:action="@{/user/viewNotes}" method="get"
+							class="d-flex align-items-center form-inline"
+							style="max-width: 500px; width: 100%;">
+							<!-- <div class="input-group input-group-md"> -->
+								<input type="text" name="keyword"
+									class="form-control mr-sm-2 rounded-start" th:value="${keyword}"
+									placeholder="Search your notes..." style="max-width: 300px;">
+								<input type="hidden" name="page" value="0" />
+								<button class="btn btn-success mx-sm-2 mx-md-3 my-2 my-sm-0 rounded-end" type="submit">
+									<i class="fa fa-search"></i>
+								</button>
+							<!-- </div> -->
+						</form>
+					</div>
+
+
+
 					<!-- If there are notes, display them -->
 					<div th:each="n : ${notesList}" class="card mt-2">
 						<div class="card-body">
@@ -42,16 +61,16 @@
 									<strong>Created At:</strong> <span th:text="${n.localDate}"></span>
 								</p>
 								<p>
-								<a th:if="${n.filePath}" th:href="@{viewNotes/downloadNoteFile/{id}(id=${n.id})}"
-								target="_blank"
-								th:text="${fileNames[n.id]}">Download</a>
-								<span th:unless="${n.filePath}">No File</span>
+									<a th:if="${n.filePath}"
+										th:href="@{viewNotes/downloadNoteFile/{id}(id=${n.id})}"
+										target="_blank" th:text="${fileNames[n.id]}">Download</a> <span
+										th:unless="${n.filePath}">No File</span>
 								</p>
 							</div>
 							<div class="text-center">
 
-								
-								
+
+
 								<a th:href="@{'editNotes/' + ${n.id}}"
 									class="btn btn-primary btn-sm">Edit</a> <a
 									th:href="@{'deleteNotes/'+${n.id}}"
@@ -69,7 +88,8 @@
 								<li class="page-item"
 									th:classappend="${currentPage == 0} ? 'disabled'"><a
 									class="page-link"
-									th:href="@{/user/viewNotes(page=${currentPage - 1})}"
+									th:href="@{/user/viewNotes(page=${currentPage - 1},
+									keyword=${keyword})}"
 									aria-label="Previous"> <span aria-hidden="true">&laquo;
 											Previous</span>
 								</a></li>
@@ -78,13 +98,16 @@
 								<li class="page-item"
 									th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
 									th:classappend="${i == currentPage} ? 'active'"><a
-									class="page-link" th:href="@{/user/viewNotes(page=${i})}"
-									th:text="${i + 1}"></a></li>
+									class="page-link"
+									th:href="@{/user/viewNotes(page=${i},
+									keyword=${keyword})}"
+									th:text="${i + 1}"> </a></li>
 
 								<li class="page-item"
 									th:classappend="${currentPage +1 == totalPages} ? 'disabled'">
 									<a class="page-link"
-									th:href="@{/user/viewNotes(page=${currentPage+1})}"
+									th:href="@{/user/viewNotes(page=${currentPage+1},
+									keyword=${keyword})}"
 									aria-label="Next"> <span aria-hidden="true">Next
 											&raquo;</span>
 								</a>

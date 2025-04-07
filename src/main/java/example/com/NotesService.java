@@ -62,6 +62,11 @@ public class NotesService {
         return notesRepository.findByUser(user, pageable);
     }
 	
+	public Page<NotesEntity>searchNotesByKeyword(UserEntity user, String keyword, int page, int size){
+		Pageable pageable = PageRequest.of(page, size);
+		return notesRepository.findByUserAndKeyword(user.getId(), keyword.toLowerCase(), pageable);
+	}
+	
 	
 	
 
