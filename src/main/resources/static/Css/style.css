@@ -1,1 +1,26 @@
 @charset "UTF-8";
+
+@media (max-width: 1000px) {
+  .custom-margine {
+    margin-bottom:10px!important;
+    text-align: left!important;
+
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (max-width: 768px) {
+  .custom-margine {
+    margin-bottom:10px!important;
+    text-align: left!important;
+
+  }
+}
+
+/* Small devices (phones, 576px and down) */
+@media (max-width: 576px) {
+  .custom-margine {
+  margin-bottom:10px!important;
+  text-align: left!important;
+  }
+}

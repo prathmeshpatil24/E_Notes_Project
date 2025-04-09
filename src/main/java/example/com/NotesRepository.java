@@ -18,8 +18,8 @@ public interface NotesRepository extends JpaRepository<NotesEntity, Integer> {
 	List<NotesEntity> findByFilePath(String filePath);
 	
 	
-	@Query("SELECT n FROM NotesEntity n WHERE n.user.id = :userId AND " +
-		       "(LOWER(n.title) LIKE %:keyword% OR LOWER(n.description) LIKE %:keyword%)")
+	@Query("SELECT n FROM NotesEntity n WHERE n.user.id = :userId AND "
+			+ "(LOWER(n.title) LIKE %:keyword% OR LOWER(n.description) LIKE %:keyword%)")
 	Page<NotesEntity>findByUserAndKeyword(@Param("userId")int userId,
 			                              @Param("keyword")String keyword,
 			                              Pageable pageable);

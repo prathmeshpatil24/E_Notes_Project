@@ -1,56 +1,109 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{ base :: layout(~{::title} , ~{::section} ) }">
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="ISO-8859-1" />
 <title>Login</title>
+
+
 </head>
 <body>
-	<section>
-		<div class="container mt-2">
-			<div class="row">
-				<div class="col-md-6 offset-md-3">
-					<div class="card">
-						<div class="card-header text-center">
-							<h3>Login Page</h3>
-
+	
+		<section class="min-vh-100 mt-5" style="background-color: #565353">
+			<div class="container h-100 py-5">
+			  <div class="row justify-content-center align-items-center">
+				<div class="col-lg-10">
+				  <div class="card shadow-lg" style="border-radius: 1rem">
+					<div class="row g-0">
+					  <!-- Left Image Section -->
+					  <div class="col-md-6 d-none d-md-block">
+						<!-- image -->
+						<!-- src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp" -->
+						<img
+						src="/img/loginPage.jpg"
+						  alt="login form"
+						  class="img-fluid h-100"
+						  style="border-radius: 1rem 0 0 1rem; object-fit: cover; height: 90vh;"
+						/>
+					  </div>
+		  
+					  <!-- Right Form Section -->
+					  <div class="col-md-6 col-12 d-flex align-items-center">
+						<div class="card-body p-4 p-lg-5 text-black w-100">
+						  <!-- Error / Logout Messages -->
+						  <div class="text-center mb-3">
 							<th:block th:if="${param.error}">
-								<p class="text-center text-danger fs-5">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+							  <p class="text-danger fs-5">
+								[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
+							  </p>
 							</th:block>
-
+		  
 							<th:block th:if="${param.logout}">
-								<p class="text-center text-success fs-5">Logout sucessfully</p>
+							  <p class="text-success fs-5">Logout successfully</p>
 							</th:block>
-						</div>
-						<div class="card-body">
-							<form th:action="@{/userlogin}" method="post">
-
-								<div class="mb-3">
-									<label>Enter Email</label> <input type="email" name="username"
-										class="form-control">
-								</div>
-
-								<div class="mb-3">
-									<label>Enter Password</label> <input type="password"
-										name="password" class="form-control">
-								</div>
-
-								<button class="btn btn-primary col-md-12">Login</button>
-							</form>
-						</div>
-						<div class="card-footer text-center">
-							<p class="fs-6">
-								don't have an account <a th:href="@{/register}"
-									class="text-decoration-none">register</a>
+						  </div>
+		  
+						  <!-- Login Form -->
+						  <form th:action="@{/userlogin}" method="post">
+							<div class="d-flex justify-content-md-start justify-content-start align-items-center mb-3">
+							  <i class="fas fa-cubes fa-2x me-2" style="color: #ff6219"></i>
+							  <span class="text-sm-center h2 fw-bold">E-Notes</span>
+							</div>
+		  
+							<h5 class="fw-normal mb-3">Sign into your account</h5>
+		  
+							<div class="form-outline mb-4">
+							  <input
+								type="email"
+								name="username"
+								class="form-control form-control-lg"
+								placeholder="Enter Email Address"
+								required
+							  />
+							</div>
+		  
+							<div class="form-outline mb-3">
+							  <input
+								type="password"
+								name="password"
+								id="myPassword"
+								class="form-control form-control-lg"
+								placeholder="Enter Password"
+								required
+							  />
+							</div>
+		  
+							<div class="mb-3">
+							  <input type="checkbox" id="togglePassword" onclick="showPassword()" />
+							  <label for="togglePassword" class="ms-1">Show Password</label>
+							</div>
+		  
+							<div class="mb-4">
+							  <button type="submit" class="btn btn-dark btn-lg w-100">Login</button>
+							</div>
+						  </form>
+		  
+						  <!-- Footer Links -->
+						  <div class="text-center">
+							<a class="small text-muted" th:href="@{/forgot-password}">Forgot password?</a>
+							<p class="mt-2">
+							  Don't have an account?
+							  <a th:href="@{/register}" style="color: #393f81">Create here</a>
 							</p>
-							<p>
-								<a th:href="@{/forgot-password}" class="link-opacity-100-hover m-2">Forgot Password?</a>
-							</p>
+							<a href="#!" class="small text-muted me-2">Terms of use</a>
+							<a href="#!" class="small text-muted">Privacy policy</a>
+						  </div>
 						</div>
+					  </div>
+					  <!-- End Right -->
 					</div>
+				  </div>
 				</div>
+			  </div>
 			</div>
-		</div>
+		  
+		  
 	</section>
+	<script th:src="@{/Js/password.js}"></script>
 </body>
 </html>
