@@ -17,6 +17,8 @@ public interface NotesRepository extends JpaRepository<NotesEntity, Integer> {
 	
 	List<NotesEntity> findByFilePath(String filePath);
 	
+	void deleteByUser(UserEntity user);
+	
 	
 	@Query("SELECT n FROM NotesEntity n WHERE n.user.id = :userId AND "
 			+ "(LOWER(n.title) LIKE %:keyword% OR LOWER(n.description) LIKE %:keyword%)")

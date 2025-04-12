@@ -1,12 +1,17 @@
 package example.com;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -45,7 +50,20 @@ public class UserEntity {
 	    @Column(unique = true, length = 64, nullable = false, updatable = false)
 	    private String verificationCode;
 
-	    public UserEntity() {
+	    
+	    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	    private List<RecentView> viewedNotes = new ArrayList<>();
+
+	    
+	    public List<RecentView> getViewedNotes() {
+			return viewedNotes;
+		}
+
+		public void setViewedNotes(List<RecentView> viewedNotes) {
+			this.viewedNotes = viewedNotes;
+		}
+
+		public UserEntity() {
 	        // Default constructor
 	    }
 

@@ -1,36 +1,51 @@
-<html lang="en" xmlns:th="www.thymeleaf.org"
-	th:replace="~{ base :: layout(~{::title} , ~{::section} ) }">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Message</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Status</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS (ensure the path is correct) -->
+    <link rel="stylesheet" th:href="@{/Css/verificationResult.css}">
 </head>
 <body>
-	<section>
-		<div class="container mt-5">
-			<div class="row justify-content-center">
-				<div class="col-md-8">
-					<div class="card text-center">
-						<div class="card-header bg-primary text-white">
-							<h3>Account Verification</h3>
-						</div>
-						<div class="card-body">
-							<!-- Display the dynamic message -->
-							<p th:text="${msg}" class="lead"></p>
+    <section class="d-flex justify-content-center align-items-center min-vh-100 p-3">
+        <!-- Success Case -->
+        <div th:if="${success == true}" class="status-card success-card p-5 animate__animated animate__fadeIn">
+            <div class="text-center">
+                <i class="bi bi-check-circle-fill text-success status-icon"></i>
+                <h2 class="mt-4 mb-3">Verification Complete!</h2>
+                <p class="lead" th:text="${msg}">Your account has been verified successfully!</p>
+                <a th:href="@{/signin}" class="btn btn-success mt-4 px-4 py-2">
+                    Go to Login
+                </a>
+            </div>
+        </div>
 
-							<!-- Show "Go to Login" button only if verification is successful -->
-							<th:block th:if="${success}">
-								<a th:href="@{/signin}" class="btn btn-primary mt-3"
-									th:if="${success}">Go to Login</a>
-							</th:block>
-						</div>
-						<div class="card-footer text-muted">&copy; 2025 e_notes Team
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+        <!-- Error Case -->
+        <div th:if="${success == false}" class="status-card error-card p-5 animate__animated animate__shakeX">
+            <div class="text-center">
+                <i class="bi bi-x-circle-fill text-danger status-icon"></i>
+                <h2 class="mt-4 mb-3">Verification Failed</h2>
+                <p class="lead" th:text="${msg}">Invalid or expired verification code.</p>
+                <div class="d-grid gap-2 mt-4">
+                    <a th:href="@{/register}" class="btn btn-danger">
+                        Register Again
+                    </a>
+                    <a th:href="@{/contact-support}" class="btn btn-outline-danger">
+                        Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

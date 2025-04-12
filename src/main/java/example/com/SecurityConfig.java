@@ -35,7 +35,7 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable() // Optional: consider enabling for production
 				.authorizeHttpRequests()
-				.requestMatchers("/user/**").hasRole("USER") // Ensure users have the ROLE_USER
+				//.requestMatchers("/user/**").hasRole("USER") // Ensure users have the ROLE_USER
 				.requestMatchers("/**").permitAll() // Allow public access to other paths
 				.and()
 				.formLogin()
@@ -53,4 +53,16 @@ public class SecurityConfig {
 		return http.build();
 	}
 
+	//Disable Security Temporarily (for Development)
+//	@Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//            .authorizeHttpRequests(auth -> auth
+//                .anyRequest().permitAll()  // allow all URLs without login
+//            )
+//            .csrf().disable()  // disable CSRF for development
+//            .formLogin().disable(); // disable login form
+//
+//        return http.build();
+//    }
 }

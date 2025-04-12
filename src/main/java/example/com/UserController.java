@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,6 +51,9 @@ public class UserController {
 
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private RecentViewedNotesService recentViewedNotesService;
 
 	@ModelAttribute
 	public UserEntity getUser(Principal p, Model m) {
@@ -68,6 +72,19 @@ public class UserController {
 		UserEntity user = getUser(p, m);
 		m.addAttribute("name", user.getName().toUpperCase());
 		m.addAttribute("userID", user.getId());
+		
+		
+		Page<NotesEntity> paginatedNotes;
+		Page<NotesEntity> notesByUser = notesService.getNotesByUser(user, 1, 1);
+//		long totalElements = notesByUser.getTotalElements();
+		m.addAttribute("totalNotes", notesByUser.getTotalElements());
+		
+		
+		//logic for recent view 
+			
+		List<NotesEntity> recentNotesForUser = recentViewedNotesService.getRecentNotesForUser(user);
+		m.addAttribute("recentNotes", recentNotesForUser);
+	
 		return "homePage";
 	}
 
@@ -253,6 +270,9 @@ public class UserController {
 		m.addAttribute("email", user.getEmail());
 		m.addAttribute("gender", user.getGender());
 		m.addAttribute("address", user.getAddress());
+		
+		Page<NotesEntity> notesByUser = notesService.getNotesByUser(user, 1, 1);
+		m.addAttribute("totalNotes", notesByUser.getTotalElements());
 
 		// Retrieve flash attributes and add them to the model
 		if (redirectAttributes.getFlashAttributes().containsKey("success")) {
@@ -317,10 +337,13 @@ public class UserController {
 
 	@PostMapping("/changePassword")
 	public String changePassword(@RequestParam("oldPassword") String oldPassword,
-			@RequestParam("newPassword") String newPassword, Principal p, Model m,
+			@RequestParam("newPassword") String newPassword,
+			@RequestParam("confirmPassword") String confirmPassword,
+			Principal p, Model m,
 			RedirectAttributes redirectAttributes) {
 		System.out.println("old pass:- " + oldPassword);
 		System.out.println("new pass:- " + newPassword);
+		System.out.println("confirm Password:- " + confirmPassword);
 
 		UserEntity user = getUser(p, m);
 
@@ -344,6 +367,12 @@ public class UserController {
 			redirectAttributes.addFlashAttribute("error", "New password must be at least 6 characters");
 			return "redirect:/user/setting";
 		}
+		
+		// Check if new password and confirm password match
+	    if (!newPassword.equals(confirmPassword)) {
+	        redirectAttributes.addFlashAttribute("error", "New password and confirm password do not match");
+	        return "redirect:/user/setting";
+	    }
 
 		// Update password
 		String encodedNewPassword = passwordEncoder.encode(newPassword);
@@ -358,5 +387,41 @@ public class UserController {
 			return "redirect:/user/setting";
 		}
 	}
+	
+	
+	
+//	delete-account
+	@PostMapping("/delete-account")
+	public String deleteAccount(@RequestParam("password") String password, Principal principal, Model model, HttpSession session) {
+
+	    String userEmail = principal.getName();
+	    UserEntity user = userRepo.findByEmail(userEmail);
+
+	    if (user == null) {
+	        model.addAttribute("error", "User not found!");
+	        return "settings";
+	    }
+
+	    // ✅ If passwords are stored as hashed (e.g., BCrypt), use passwordEncoder
+	    if (passwordEncoder.matches(password, user.getPassword())) {
+
+	        // Delete associated notes
+	        notesRepo.deleteByUser(user);
+
+	        // Delete user account
+	        userRepo.delete(user);
+
+	        // Invalidate session
+	        session.invalidate();
+
+	        return "redirect:/?accountDeleted";
+
+	    } else {
+	        model.addAttribute("error", "Incorrect password. Please try again.");
+	        return "settings"; // Return to settings page with error
+	    }
+	}
+
+	
 
 }

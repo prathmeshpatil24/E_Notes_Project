@@ -6,46 +6,64 @@
 <title>Edit Notes</title>
 </head>
 <body>
-	<section>
-		<div class="container mt-2">
-			<div class="row">
-				<div class="col-md-10 offset-md-1">
-					<div class="card">
-						<div class="card-header text-center">
-							<h3>Edit your Notes</h3>
-							
 
-						</div>
-						<div class="card-body">
-							<form th:action="@{/user/saveNotes}"  method="post">
-							<!-- avoid this duplicate data -->
-							<input type="hidden" name="id" th:value="${notes.id}">
-								<div class="mb-3">
-									<label>Enter Title</label> <input type="text"
-									 name="title"
-									 th:value= "${notes.title}"
-										class="form-control">
-								</div>
-
-								<div class="mb-3">
-									<label>Enter Description</label>
-									<textarea rows="6" cols="" class="form-control"
-										name="description"
-										 th:text="${notes.description}"
-										 ></textarea>
-								</div>
-
-								<button class="btn btn-primary mt-4">Update</button>
-
-
-
-							</form>
-						</div>
-					</div>
-				</div>
+	<section class="min-vh-100 container-fluid pt-5 mt-5 pb-5"
+	style="background-color: #565353">
+	  <!-- <div class="container"> -->
+		<div class="row justify-content-center">
+		  <div class=" col-10 col-md-10 col-lg-10 col-sm-10">
+			<div class="card shadow-lg border-0 rounded-4">
+			  <div class="card-header text-white text-center rounded-top-4"
+			  style="background-color: rgb(45, 46, 46);">
+				<h3 class="m-3">📝 Edit  Your Notes</h3>
+			  </div>
+	
+			  <div class="card-body p-4">
+			  
+	
+				<!-- Form -->
+				<form th:action="@{/user/saveNotes}" method="post">
+  
+				  <input type="hidden" name="id" th:value="${notes.id}">
+				  <!-- Title -->
+				  <div class="mb-4">
+					<label class="form-label fw-semibold">Title</label>
+					<input type="text"  name="title"
+					th:value= "${notes.title}"
+					 class="form-control shadow-sm" placeholder="Enter note title" required />
+				  </div>
+	
+				  <!-- Description -->
+				  <div class="mb-4">
+					<label class="form-label fw-semibold">Description</label>
+					<textarea  name="description"
+					th:text="${notes.description}" rows="6" class="form-control shadow-sm" placeholder="Write your notes here..." required></textarea>
+				  </div>
+	
+				  
+				  <!-- Submit Button -->
+				  <div class="d-flex justify-content-md-end justify-content-center">
+					<button type="submit" class=" btn btn-dark btn-lg shadow rounded-pill">
+					  <i class="fas fa-save me-2"></i>Update Note
+					</button>
+  
+					<button type="reset" class="btn btn-dark btn-lg shadow rounded-pill ms-2">
+					  <i class="fas fa-eraser me-2"></i>Clear
+					</button>
+				  </div>
+				</form>
+			  </div>
+	
+			  <div class="card-footer text-muted text-center small py-2">
+				You can view, edit, or delete your notes later.
+			  </div>
 			</div>
+		  </div>
 		</div>
+	  <!-- </div> -->
 	</section>
+
+	
 
 </body>
 </html>
