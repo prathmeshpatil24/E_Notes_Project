@@ -283,7 +283,7 @@ public class UserController {
 	public String deleteNotes(@PathVariable int id, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		notesService.deleteNotesById(id);
-		String stringMsg = "Note with ID %d deleted successfully!" + id;
+		String stringMsg = "Note with ID" +  id  + "deleted successfully!";
 		redirectAttributes.addFlashAttribute("message", stringMsg);
 
 		//session.setAttribute("msg", "Note deleted successfully.");
