@@ -1,4 +1,4 @@
-package example.com;
+package example.com.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

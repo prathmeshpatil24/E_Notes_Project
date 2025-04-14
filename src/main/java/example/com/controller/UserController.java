@@ -1,4 +1,5 @@
-package example.com;
+package example.com.controller;
+
 
 import java.io.IOException;
 import java.security.Principal;
@@ -26,10 +27,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import example.com.entity.NotesEntity;
+import example.com.entity.UserEntity;
+import example.com.repository.NotesRepository;
+import example.com.repository.UserRepository;
+import example.com.service.FileService;
+import example.com.service.NotesService;
+import example.com.service.RecentViewedNotesService;
+import example.com.service.UserServiceImpl;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -275,7 +283,8 @@ public class UserController {
 	public String deleteNotes(@PathVariable int id, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		notesService.deleteNotesById(id);
-		redirectAttributes.addFlashAttribute("message", String.format("Note with ID %d deleted successfully!", id));
+		String stringMsg = "Note with ID %d deleted successfully!" + id;
+		redirectAttributes.addFlashAttribute("message", stringMsg);
 
 		//session.setAttribute("msg", "Note deleted successfully.");
 		return "redirect:/user/viewNotes"; // Redirect to the view notes page after deletion
