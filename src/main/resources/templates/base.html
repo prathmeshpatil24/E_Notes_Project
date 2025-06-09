@@ -13,6 +13,7 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
 	integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -93,6 +94,8 @@
 				<!-- right block -->
 				<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 					<th:block th:if="${user==NULL}">
+					<li class="nav-item custom-margine mx-4 "><a th:href="@{/about}"
+							class="text-decoration-none text-white"> About</a></li>
 						<li class="nav-item custom-margine"><a th:href="@{/register}"
 							class="btn btn-sm btn-primary"><i
 								class="fa-solid fa-user-plus"></i> Register</a></li>
