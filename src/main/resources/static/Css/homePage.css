@@ -1,0 +1,115 @@
+@charset "UTF-8";
+
+
+
+.welcome-card {
+     background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    margin-bottom: 30px;
+    border-left: 5px solid black;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.welcome-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(247, 245, 245, 0.1);
+}
+
+.welcome-title {
+    color: black;
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-size: 2rem;
+}
+
+.user-info {
+    font-size: 1.1rem;
+    color: #5a5c69;
+    margin-bottom: 20px;
+}
+
+
+.quick-actions {
+    background:  #ffffff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.section-title {
+    color: black;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+}
+
+.quick-action-card {
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.quick-action-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    background-color: #080808;
+}
+
+.action-link {
+    color: #060606;
+    transition: all 0.3s ease;
+}
+
+.quick-action-card:hover .action-link {
+    color: white !important;
+}
+
+
+.recent-notes {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.note-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s;
+}
+
+.note-item:hover {
+    background-color: rgba(13, 13, 13, 0.05);
+}
+
+.note-item:last-child {
+    border-bottom: none;
+}
+
+.note-title {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 5px;
+}
+
+.note-date {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #ffffff;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: #ddd;
+    margin-bottom: 15px;
+}
+
+

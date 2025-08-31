@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org"
+      th:replace="~{ base :: layout(~{::title} , ~{::section} ) }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>About | E-Notes</title>
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-hero-img-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, rgba(106,17,203,0.2) 0%, rgba(37,117,252,0.2) 100%);
+            z-index: 1;
+        }
+        .developer-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(37,117,252,0.08);
+        }
+        .developer-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 24px rgba(37,117,252,0.15);
+        }
+        .developer-img {
+            height: 200px;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #2575fc;
+            margin-bottom: 1rem;
+        }
+        .feature-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(37,117,252,0.07);
+            transition: box-shadow 0.3s;
+            padding: 2rem 1.5rem;
+        }
+        .feature-card:hover {
+            box-shadow: 0 6px 24px rgba(37,117,252,0.13);
+        }
+        .rounded-section {
+            border-radius: 18px;
+        }
+        .btn-primary, .btn-outline-primary {
+            box-shadow: 0 2px 8px rgba(37,117,252,0.12);
+        }
+        hr.header-line {
+            border: 0;
+            border-top: 3px solid #fff;
+            width: 80px;
+            margin: 1.5rem 0 2rem 0;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+  <section>
+    <!-- Hero Section -->
+<div class="about-hero py-5 mb-4 position-relative">
+        <div class="about-hero-img-overlay"></div>
+        <div class="container py-4 position-relative" style="z-index:2;">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-3">About E-Notes</h1>
+                    <hr class="header-line">
+                    <p class="lead mb-4">Your simple, powerful note-taking solution designed for productivity.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="#" class="btn btn-primary btn-lg px-4 mb-2">Explore Features</a>
+                        <a href="#" class="btn btn-outline-light btn-lg px-4 mb-2">Contact Us</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 mt-4 d-flex justify-content-center">
+                    <img src="/img/e_notesAbout.jpg" alt="About E-Notes" class="img-fluid rounded rounded-4 shadow" th:src="@{/img/e_notesAbout.jpg}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Features -->
+ <div class="container my-5 py-4 rounded-section bg-white shadow-sm">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Why Choose E-Notes?</h2>
+            <p class="lead text-muted">Designed with simplicity and functionality in mind</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon">
+                        <i class="bi bi-cloud-arrow-up fs-2"></i>
+                    </div>
+                    <h4>Cloud Sync</h4>
+                    <p>Access your notes from any device with our secure cloud synchronization.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon">
+                        <i class="bi bi-search fs-2"></i>
+                    </div>
+                    <h4>Smart Search</h4>
+                    <p>Find any note instantly with our powerful full-text search capability.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon">
+                        <i class="bi bi-lock fs-2"></i>
+                    </div>
+                    <h4>End-to-End Encryption</h4>
+                    <p>Your notes are encrypted before they leave your device for maximum security.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Developer Section -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Meet the Developer</h2>
+                <p class="lead text-muted">The mind behind E-Notes</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-10 rounded rounded-4">
+                    <div class="card developer-card mb-4">
+                        <div class="row g-0">
+                            <div class="col-md-5">
+                                <img src="/img/developer1.jpg" class="img-fluid developer-img w-100 h-100 rounded-start-2" alt="Developer" th:src="@{/img/developer1.jpg}">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body p-4">
+                                    <h3 class="card-title">Prathmesh Patil</h3>
+                                    <p class="text-muted mb-3">Full Stack Developer</p>
+                                    <p class="card-text mb-4">Handes on experience in web development, Prathmesh created E-Notes to solve his own frustrations with existing note-taking apps. His passion for clean, efficient software is evident in every aspect of E-Notes.</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="#" class=" text-dark fs-3 mx-auto"><i class="bi bi-github"></i></a>
+                                        <a href="#" class=" text-primary fs-3 mx-auto"><i class="bi bi-linkedin"></i></a>
+                                        <a href="#" class=" text-info fs-3 mx-auto"><i class="bi bi-twitter"></i></a>
+                                        <a href="#" class=" text-danger fs-3 mx-auto"><i class="bi bi-envelope"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- <div class="text-center mt-4">
+                <a th:href="@{/contact}" class="btn btn-primary px-4">Contact Developer</a>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- App Journey -->
+    <div class="container my-5 py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="/img/app_dev.jpg" alt="App Development" class="img-fluid rounded rounded-4" th:src="@{/img/app_dev.jpg}">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">Our Journey</h2>
+                <p>E-Notes started as a personal project in 2025 to solve the developer's own frustrations with existing note-taking applications. After months of development and testing with close friends, the first public version was launched in early 2025.</p>
+                <p>What began as a simple note-taking app has evolved into a full-featured productivity platform, thanks to valuable feedback from our growing community of users.</p>
+                <p>We remain committed to our core principles: simplicity, privacy, and user-focused design.</p>
+                <!-- <a th:href="@{/blog/our-story}" class="btn btn-outline-primary mt-3">Read Our Full Story</a> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-primary text-white py-5">
+        <div class="container text-center py-4">
+            <h2 class="fw-bold mb-4">Ready to Get Organized?</h2>
+            <p class="lead mb-4">Join thousands of users who trust E-Notes for their daily productivity</p>
+            <a th:href="@{/register}" class="btn btn-light btn-lg px-5 me-3">Sign Up Free</a>
+            <a href="#" class="btn btn-outline-light btn-lg px-5">Live Demo</a>
+        </div>
+    </div>
+  </section>
+</body>
+</html>

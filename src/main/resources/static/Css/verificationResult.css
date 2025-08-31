@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+.status-card {
+	max-width: 500px;
+	border-radius: 12px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.success-card {
+	background-color: #f8f9fa;
+	border-left: 5px solid #28a745;
+}
+
+.error-card {
+	background-color: #f8f9fa;
+	border-left: 5px solid #dc3545;
+}
+
+.status-icon {
+	font-size: 4rem;
+}

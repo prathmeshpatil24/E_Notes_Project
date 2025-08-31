@@ -1,67 +1,288 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{base::layout(~{::title}, ~{::section})}">
-<head>
-<meta charset="UTF-8">
-<title>Home</title>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::layout(~{::title}, ~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home</title>
+    <!-- home page css -->
+    <link rel="stylesheet" th:href="@{/Css/homePage.css}" />
+  </head>
+  <body>
+    <section>
+      <section
+        class="min-vh-100 container-fluid pt-5 mt-5 pb-5"
+        style="background-color: #565353"
+      >
+        <div class="container-fluid">
+          <!-- Welcome Card -->
+          <div class="welcome-card">
+            <h1 class="welcome-title">
+              Welcome back, <span th:text="${name}"></span>! 👋
+            </h1>
+            <p class="user-info">
+              Your User ID: <strong><span th:text="${userID}"></span></strong>
+            </p>
+            <p>
+              <a
+                th:href="@{/user/addNotes}"
+                class="btn w-100 btn-dark text-center shadow shadow-lg rounded"
+              >
+                <i class="fas fa-plus-circle me-2"></i> Create New Notes
+              </a>
+            </p>
+          </div>
 
-<style>
-/* Custom styles */
-body {
-	background-color: #f8f9fa;
-	font-family: 'Arial', sans-serif;
-}
+          <!-- Stats Overview -->
+          <div class="container-fluid pt-4 my-4">
+            <div class="row g-4">
+              <!-- Total Notes Card -->
+              <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center py-4">
+                    <div class="text-dark mb-3">
+                      <i class="fas fa-book-open fa-3x"></i>
+                    </div>
+                    <h2
+                      class="card-title fw-bold mb-1"
+                      th:text="${totalNotes} ?: '0'"
+                    >
+                      0
+                    </h2>
+                    <p class="card-text text-muted">Total Notes</p>
+                  </div>
+                </div>
+              </div>
 
-.welcome-container {
-	max-width: 800px;
-	margin: 50px auto;
-	padding: 30px;
-	background-color: #ffffff;
-	border-radius: 10px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+              <!-- Completed Notes Card -->
+              <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center py-4">
+                    <div class="text-dark mb-3">
+                      <i class="fas fa-check-circle fa-3x"></i>
+                    </div>
+                    <h2
+                      class="card-title fw-bold mb-1"
+                      th:text="${totalNotes} ?: '0'"
+                    >
+                      0
+                    </h2>
+                    <p class="card-text text-muted">Completed Notes</p>
+                  </div>
+                </div>
+              </div>
 
-.welcome-title {
-	color: #007bff;
-	font-weight: bold;
-}
+              <!-- Categories  Card -->
+              <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center py-4">
+                    <div class="text-dark mb-3">
+                      <i class="fas fa-tags fa-3x"></i>
+                    </div>
+                    <h2
+                      class="card-title fw-bold mb-1"
+                      th:text="${totalNotes} ?: '0'"
+                    >
+                      0
+                    </h2>
+                    <p class="card-text text-muted">Categories Notes</p>
+                  </div>
+                </div>
+              </div>
 
-.user-info {
-	font-size: 1.1rem;
-	color: #343a40;
-}
+              <!-- Today's Notes Card -->
+              <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center py-4">
+                    <div class="text-dark mb-3">
+                      <i class="fas fa-calendar-alt fa-3x"></i>
+                    </div>
+                    <h2
+                      class="card-title fw-bold mb-1"
+                      th:text="${todayNotes} ?: '0'"
+                    >
+                      0
+                    </h2>
+                    <p class="card-text text-muted">Today's Notes</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-.btn-custom {
-	background-color: #007bff;
-	color: white;
-	padding: 10px 20px;
-	border-radius: 5px;
-	text-decoration: none;
-	transition: background-color 0.3s;
-}
+          <!-- Quick Actions -->
+          <div class="quick-actions">
+            <h3 class="section-title">Quick Actions</h3>
+            <div class="container-fluid p-0 m-0">
+              <div class="row gap-2 d-flex justify-content-center">
+                <!-- search notes -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2 mb-4">
+                  <div class="card shadow-sm border-2 h-100 quick-action-card">
+                    <div
+                      class="card-body text-center d-flex align-items-center justify-content-center"
+                    >
+                      <a
+                        href="#searchModal"
+                        class="text-decoration-none d-flex align-items-center action-link"
+                        data-bs-toggle="modal"
+                      >
+                        <i class="fas fa-search fa-lg me-3"></i>
+                        <span class="fw-medium">Search Notes</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
 
-.btn-custom:hover {
-	background-color: #0056b3;
-	color: white;
-}
-</style>
-</head>
-<body>
-	<section>
-		<div class="welcome-container text-center">
-			<h1 class="welcome-title">
-				Welcome, <span th:text="${name}"></span> to E-Notes!
-			</h1>
-			<p class="user-info">
-				Your User ID: <strong><span th:text="${userID}"></span></strong>
-			</p>
-			<p>
-				<a class="btn-custom nav-link" th:href="@{/user/addNotes}"> Add
-					Your Notes </a>
-			</p>
-		</div>
-	</section>
+                <!-- Search Modal -->
+                <div
+                  class="modal fade"
+                  id="searchModal"
+                  tabindex="-1"
+                  aria-labelledby="searchModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="searchModalLabel">
+                          Search Notes
+                        </h5>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <form th:action="@{/user/viewNotes}" method="get">
+                        <div class="modal-body">
+                          <input
+                            type="text"
+                            name="keyword"
+							th:value="${keyword}"
+                            class="form-control"
+                            placeholder="Enter keyword..."
+                          />
+                          <input type="hidden" name="page" value="0" />
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-success">
+                            <i class="fas fa-search me-1"></i> Search
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+				<!-- search content end -->
 
+                <!-- view Categories -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2 mb-4">
+                  <div class="card shadow-sm border-2 h-100 quick-action-card">
+                    <div
+                      class="card-body text-center d-flex align-items-center justify-content-center"
+                    >
+                      <a
+                        href="#"
+                        class="text-decoration-none d-flex align-items-center action-link"
+                      >
+                        <i class="fas fa-folder fa-lg me-3"></i>
+                        <span class="fw-medium">view Categories</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
 
-</body>
+                <!-- settings -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2 mb-4">
+                  <div class="card shadow-sm border-2 h-100 quick-action-card">
+                    <div
+                      class="card-body text-center d-flex align-items-center justify-content-center"
+                    >
+                      <a
+                        th:href="@{/user/setting}"
+                        class="text-decoration-none d-flex align-items-center action-link"
+                      >
+                        <i class="fas fa-cog fa-lg me-3"></i>
+                        <span class="fw-medium">settings</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- share notes -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2 mb-4">
+                  <div class="card shadow-sm border-2 h-100 quick-action-card">
+                    <div
+                      class="card-body text-center d-flex align-items-center justify-content-center"
+                    >
+                      <a
+                        href="#"
+                        class="text-decoration-none d-flex align-items-center action-link"
+                      >
+                        <i class="fas fa-share-alt fa-lg me-3"></i>
+                        <span class="fw-medium">Share Notes</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Notes -->
+          <div class="recent-notes">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="section-title mb-0">Recent Notes</h3>
+              <a th:href="@{/user/viewNotes}" class="text-dark">View All</a>
+            </div>
+
+            <div th:if="${recentNotes} and ${#lists.size(recentNotes)} > 0">
+                    <div class="note-item" th:each="note : ${recentNotes}">
+                        <div class="card-title" th:text="${note.title}">Note Title</div>
+                        <div class="note-date" th:text="${#temporals.format(note.date, 'MMM dd, yyyy')}">Jun 15, 2023</div>
+                    </div>
+                </div>
+
+            <!-- <div>
+              <div class="note-item">
+                <div class="card-title">Note Title</div>
+                <div class="note-date">Jun 15, 2023</div>
+              </div>
+            </div> -->
+
+            <div th:unless="${recentNotes} and ${#lists.size(recentNotes)} > 0" class="empty-state text-dark">
+                    <div class="empty-icon">
+                        <i class="fas fa-clipboard"></i>
+                    </div>
+                    <h4 class="text-dark">No Recent Notes</h4>
+                    <p>You haven't created any notes yet. Get started by creating your first note!</p>
+                    <a class="btn w-100 btn-dark text-center shadow shadow-lg rounded mt-3" th:href="@{/user/addNotes}">
+                        <i class="fas fa-plus-circle me-2"></i> Create Note
+                    </a>
+                </div>
+
+            <!-- <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-clipboard"></i>
+              </div>
+              <h4 class="text-dark">No Recent Notes</h4>
+              <p class="text-dark">
+                You haven't created any notes yet. Get started by creating your
+                first note!
+              </p>
+              <a
+                class="btn w-100 btn-dark text-center shadow shadow-lg rounded mt-3"
+                th:href="@{/user/addNotes}"
+              >
+                <i class="fas fa-plus-circle me-2"></i> Create Note
+              </a>
+            </div> -->
+          </div>
+        </div>
+      </section>
+    </section>
+  </body>
 </html>

@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+
+/* Change Password tab active (blue) */
+#password-tab.active {
+    background-color: #424d60 !important;
+    color: white !important;
+    border-color: #424d60 !important;
+}
+
+/* Delete Account tab active (red) */
+#delete-tab.active {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+}
+
+/* Optional hover for inactive tabs */
+.nav-tabs .nav-link:hover {
+    background-color: #e9ecef;
+}
